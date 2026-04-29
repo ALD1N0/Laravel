@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pastikan body menggunakan flexbox */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Membuat body setinggi 100% layar */
+}
+
+/* Main content akan mengisi ruang yang tersisa */
+main {
+    flex: 1;
+}
+
+/* Styling untuk footer */
+footer {
+    background-color: #2d3748; /* Warna latar belakang footer */
+    color: white; /* Warna teks footer */
+    padding: 1.5rem 0; /* Memberikan padding pada footer */
+    width: 100%; /* Memastikan footer mengisi lebar layar */
+}
+

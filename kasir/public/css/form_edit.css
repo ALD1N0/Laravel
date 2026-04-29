@@ -1,0 +1,104 @@
+/* CONTAINER */
+.form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* TITLE */
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* LABEL */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group p {
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+/* INPUT */
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 5px rgba(78,115,223,0.3);
+}
+
+/* FILE INPUT */
+input[type="file"] {
+    background: #f5f7fb;
+    cursor: pointer;
+}
+
+/* BUTTON WRAPPER */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* BUTTON */
+.btn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+/* PRIMARY BUTTON */
+.btn-primary {
+    background: linear-gradient(135deg, #4e73df, #224abe);
+    color: white;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+/* SECONDARY BUTTON */
+.btn-secondary {
+    background: #ddd;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #ccc;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .form-container {
+        margin: 20px;
+        padding: 20px;
+    }
+}
+.preview-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    margin-top: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.preview-img {
+    transition: 0.3s;
+}

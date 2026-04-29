@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Barang extends Model
+{
+    protected $primaryKey = 'id_barang';
+
+    protected $fillable = [
+        'nama',
+        'stok',
+        'harga',
+        'gambar'
+    ];
+
+    public function detailTransaksi()
+    {
+        return $this->hasMany(DetailTransaksi::class, 'id_barang');
+    }
+}

@@ -1,0 +1,119 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+}
+.profile-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+}
+.profile-header {
+    display: flex;
+    align-items: center;
+}
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 20px;
+}
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.profile-info {
+    flex: 1;
+}
+.profile-info h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+.profile-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+.profile-stats div {
+    text-align: center;
+}
+.profile-stats div strong {
+    display: block;
+    font-size: 18px;
+}
+.profile-bio {
+    margin-bottom: 20px;
+}
+.profile-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #444;
+}
+.profile-tabs a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    width: 33.33%;
+    font-size: 16px;
+}
+.profile-tabs a:hover {
+    background-color: #444;
+}
+.profile-posts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.profile-posts img, .profile-posts video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 48%;
+    text-align: center
+}
+
+.btn.archive {
+    background-color: #555;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.btn.archive:hover {
+    background-color: #444;
+}
+
+.profile-posts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.profile-posts img, .profile-posts video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

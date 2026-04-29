@@ -1,0 +1,195 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+  }
+  
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #fff;
+    border-right: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .sidebar h1 {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+  
+  .sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .sidebar nav a {
+    text-decoration: none;
+    color: black;
+    font-size: 16px;
+  }
+  
+  .sidebar nav a.active {
+    background: #ddd;
+    padding: 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: purple;
+  }
+
+  .main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  .sticky-top {
+    position: fixed;
+    top: 0;
+    left: 240px;
+    width: calc(100% - 240px);
+    background: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .search input {
+    padding: 8px;
+    background: #eee;
+    border: none;
+    border-radius: 5px;
+  }
+  .icons {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }  
+  .container {
+    max-width: 1500px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .tambah-btn {
+    background-color: #c42dd4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+  }
+  
+  .product-img {
+    width: 60px;
+    height: auto;
+  }
+  
+  .ubah-btn {
+    background: #7ddf4c;
+    border: none;
+    padding: 6px 12px;
+    margin-right: 5px;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .hapus-btn {
+    background: #e94343;
+    border: none;
+    padding: 6px 12px;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  /* MODAL STYLE */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 99;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+  }
+  
+  .modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 500px;
+    border-radius: 10px;
+    position: relative;
+  }
+  
+  .modal-content h3 {
+    margin-top: 0;
+  }
+  
+  .modal-content label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .modal-content input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f8f0ff;
+  }
+  
+  .tambah-produk-btn {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    background-color: #d400d4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
