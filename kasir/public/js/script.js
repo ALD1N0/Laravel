@@ -5,29 +5,36 @@ let total = 0;
 // =======================
 // TAMBAH BARANG
 // =======================
-function tambahBarang(el, id, nama, harga, stok) {
+function tambahBarang(el, id, nama, harga, stok, cardEl = null) {
 
-    let card = el.closest(".card");
+    let card = cardEl ? cardEl : el.closest(".card");
     let stokEl = card.querySelector(".stok");
+    let btn = card.querySelector(".btn-add");
 
     let currentStok = parseInt(stokEl.getAttribute("data-stok"));
 
     if (currentStok <= 0) {
-        alert("Stok habis!");
+        Swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'warning',
+            title: 'Stok habis',
+            showConfirmButton: false,
+            timer: 2000
+        });
         return;
     }
 
-    // kurangi stok UI
     currentStok--;
     stokEl.setAttribute("data-stok", currentStok);
     stokEl.innerText = "Stok: " + currentStok;
 
     if (currentStok === 0) {
-        el.disabled = true;
-        el.innerText = "Habis";
+        btn.disabled = true;
+        btn.innerText = "Habis";
+        card.classList.add("habis");
     }
 
-    // simpan ke cart pakai ID
     if (cart[id]) {
         cart[id].qty += 1;
     } else {
@@ -36,24 +43,29 @@ function tambahBarang(el, id, nama, harga, stok) {
             nama: nama,
             harga: harga,
             qty: 1,
-            el: el,
-            stokEl: stokEl
+            stokEl: stokEl,
+            btn: btn,
+            card: card
         };
     }
 
     renderCart();
 }
 
-// =======================
-// TAMBAH QTY (➕)
-// =======================
 function tambahQty(id) {
 
     let item = cart[id];
     let currentStok = parseInt(item.stokEl.getAttribute("data-stok"));
 
     if (currentStok <= 0) {
-        alert("Stok habis!");
+        Swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'warning',
+            title: 'Stok habis',
+            showConfirmButton: false,
+            timer: 2000
+        });
         return;
     }
 
@@ -64,16 +76,14 @@ function tambahQty(id) {
     item.qty += 1;
 
     if (currentStok === 0) {
-        item.el.disabled = true;
-        item.el.innerText = "Habis";
+        item.btn.disabled = true;
+        item.btn.innerText = "Habis";
+        item.card.classList.add("habis");
     }
 
     renderCart();
 }
 
-// =======================
-// KURANG QTY (➖)
-// =======================
 function kurangQty(id) {
 
     let item = cart[id];
@@ -84,8 +94,13 @@ function kurangQty(id) {
     item.stokEl.setAttribute("data-stok", currentStok);
     item.stokEl.innerText = "Stok: " + currentStok;
 
-    item.el.disabled = false;
-    item.el.innerText = "Add";
+    // aktifkan tombol lagi
+    item.btn.disabled = false;
+    item.btn.innerText = "Tambah";
+
+    if (currentStok > 0) {
+        item.card.classList.remove("habis");
+    }
 
     item.qty--;
 
@@ -100,32 +115,46 @@ function kurangQty(id) {
 // RENDER CART
 // =======================
 function renderCart() {
-    const table = document.getElementById("listBarang");
-    table.innerHTML = "";
+    const list = document.getElementById("listBarang");
+    list.innerHTML = "";
 
-    total = 0;
+    total = 0; // <-- FIX DI SINI
+    let jumlahItem = 0;
 
     for (let id in cart) {
         let item = cart[id];
         let subtotal = item.harga * item.qty;
+
         total += subtotal;
+        jumlahItem += item.qty;
 
-        const row = document.createElement("tr");
+        list.innerHTML += `
+            <tr class="cart-item-row">
 
-        row.innerHTML = `
-            <td>${item.nama}</td>
-            <td>
-                <button onclick="kurangQty(${id})">➖</button>
-                ${item.qty}
-                <button onclick="tambahQty(${id})">➕</button>
-            </td>
-            <td>Rp ${subtotal}</td>
+                <td>
+                    ${item.nama}
+                </td>
+
+                <td>
+                    <div class="qty-control">
+                        <button onclick="kurangQty(${id})">−</button>
+
+                        <span>${item.qty}</span>
+
+                        <button onclick="tambahQty(${id})">+</button>
+                    </div>
+                </td>
+
+                <td>
+                    Rp ${subtotal.toLocaleString("id-ID")}
+                </td>
+
+            </tr>
         `;
-
-        table.appendChild(row);
     }
 
-    document.getElementById("total").innerText = total;
+    document.getElementById("total").innerText =
+        total.toLocaleString("id-ID");
 }
 
 function cariProdukTabel() {
@@ -162,7 +191,7 @@ function cariProduk() {
 async function checkout() {
 
     if (Object.keys(cart).length === 0) {
-        alert("Keranjang kosong!");
+        showToast("🛒 Keranjang masih kosong");
         return;
     }
 
@@ -185,29 +214,79 @@ async function checkout() {
 
     // TAMPILKAN STRUK DI HALAMAN
     let strukHTML = `
-        <h3 style="text-align:center;">MAREM STORE</h3>
-        <p style="text-align:center; font-size:12px;">
-            ${new Date().toLocaleString()}
-        </p>
+    
+    <div class="receipt-paper">
 
-        <table style="width:100%; font-size:12px;">
+        <!-- HEADER -->
+        <div class="receipt-header">
+
+            <h2>MAREM STORE</h2>
+
+            <p>
+                ${new Date().toLocaleString()}
+            </p>
+
+            <p>
+                ========================
+            </p>
+
+        </div>
+
+
+        <!-- ITEMS -->
+        <table class="receipt-table">
+
             ${items}
+
         </table>
 
-        <hr>
 
-        <h4>Total: Rp ${total}</h4>
+        <!-- TOTAL -->
+        <div class="receipt-total">
 
-        <p style="text-align:center;">Terima kasih 🙏</p>
+            <span>TOTAL</span>
 
-        <button onclick="printStruk()" style="width:100%; margin-top:10px;">
-            Print
-        </button>
+            <strong>
+                Rp ${Number(total).toLocaleString()}
+            </strong>
 
-        <button onclick="kembaliKeCart()" style="width:100%; margin-top:5px;">
-            Kembali
-        </button>
-    `;
+        </div>
+
+
+        <div class="receipt-divider">
+            ========================
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="receipt-footer">
+
+            <p>Terima Kasih 🙏</p>
+
+            <small>
+                Barang yang sudah dibeli
+                tidak dapat dikembalikan
+            </small>
+
+        </div>
+
+
+        <!-- ACTION -->
+        <div class="receipt-actions">
+
+            <button onclick="printStruk()" class="btn-print">
+                🖨 Print
+            </button>
+
+            <button onclick="kembaliKeCart()" class="btn-back">
+                ← Kembali
+            </button>
+
+        </div>
+
+    </div>
+
+`;
 
     document.getElementById("cartView").style.display = "none";
     document.getElementById("strukView").style.display = "block";
@@ -245,145 +324,827 @@ async function checkout() {
 function formatRupiah(angka) {
     return angka.toLocaleString('id-ID');
 }
+
 function printStruk() {
-    window.print();
+
+    const receipt =
+        document.querySelector(".receipt-paper");
+
+    if (!receipt) return;
+
+
+    /* hapus iframe lama kalau ada */
+    const oldFrame =
+        document.getElementById("printFrame");
+
+    if(oldFrame){
+
+        oldFrame.remove();
+
+    }
+
+
+    /* buat iframe hidden */
+    const iframe =
+        document.createElement("iframe");
+
+    iframe.id = "printFrame";
+
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+
+    iframe.style.border = "0";
+
+
+    document.body.appendChild(iframe);
+
+
+    const frameDoc =
+        iframe.contentWindow.document;
+
+
+    frameDoc.open();
+
+    frameDoc.write(`
+
+        <html>
+
+        <head>
+
+            <title>Print Struk</title>
+
+            <style>
+
+                @page{
+                    size: 80mm auto;
+                    margin: 0;
+                }
+
+                *{
+                    box-sizing: border-box;
+                }
+
+                body{
+
+                    margin: 0;
+
+                    display: flex;
+                    justify-content: center;
+
+                    background: white;
+
+                    font-family: monospace;
+
+                    color: black;
+
+                    font-size: 12px;
+
+                }
+
+
+                .receipt-paper{
+
+                    width: 80mm;
+
+                    padding: 8px;
+
+                }
+
+
+                .receipt-header{
+
+                    text-align: center;
+
+                    margin-bottom: 10px;
+
+                }
+
+
+                .receipt-header h2{
+
+                    margin: 0;
+
+                    font-size: 18px;
+
+                }
+
+
+                .receipt-header p{
+
+                    margin: 3px 0;
+
+                    font-size: 11px;
+
+                }
+
+
+                .receipt-table{
+
+                    width: 100%;
+
+                    border-collapse: collapse;
+
+                }
+
+
+                .receipt-table td{
+
+                    padding: 4px 0;
+
+                }
+
+
+                .receipt-table td:last-child{
+
+                    text-align: right;
+
+                }
+
+
+                .receipt-total{
+
+                    display: flex;
+
+                    justify-content: space-between;
+
+                    margin-top: 10px;
+
+                    font-weight: bold;
+
+                }
+
+
+                .receipt-footer{
+
+                    text-align: center;
+
+                    margin-top: 12px;
+
+                }
+
+
+                .receipt-actions{
+
+                    display: none !important;
+
+                }
+
+            </style>
+
+        </head>
+
+        <body>
+
+            ${receipt.outerHTML}
+
+        </body>
+
+        </html>
+
+    `);
+
+    frameDoc.close();
+
+
+    setTimeout(() => {
+
+        iframe.contentWindow.focus();
+
+        iframe.contentWindow.print();
+
+    }, 500);
+
 }
-function kembaliKeCart() {
+function kembaliKeCart(){
+
     document.getElementById("strukView").style.display = "none";
-    document.getElementById("cartView").style.display = "block";
+
+    const cart = document.getElementById("cartView");
+
+    cart.style.display = "flex";
+    cart.style.height = "100%";
+
 }
 
-function printTransaksi(id) {
-    let content = document.getElementById("transaksi-" + id).innerHTML;
+function printTransaksi(id){
 
-    let win = window.open('', '', 'width=300,height=600');
-    win.document.write(`
-        <html>
-        <head>
-        <style>
-        body { font-family: monospace; padding:10px; }
-        table { width:100%; font-size:12px; border-collapse: collapse; }
-        td, th { padding:5px; border-bottom:1px solid #ccc; }
-        h3 { text-align:center; }
-        </style>
-        </head>
-        <body>
-            <h3>MAREM STORE</h3>
-            ${content}
-        </body>
-        </html>
-    `);
-    win.document.close();
-    win.print();
+    const content =
+        document.getElementById(
+            "transaksi-" + id
+        );
+
+    if(!content) return;
+
+
+    createPrintFrame(
+        "MAREM STORE",
+        content.outerHTML
+    );
+
 }
 
-function printSemua() {
-    let content = document.querySelector(".content-print").innerHTML;
+function printSemua(){
 
-    let win = window.open('', '', 'width=300,height=600');
-    win.document.write(`
-        <html>
-        <head>
-        <style>
-        body { font-family: monospace; padding:10px; }
-        table { width:100%; font-size:12px; border-collapse: collapse; }
-        td, th { padding:5px; border-bottom:1px solid #ccc; }
-        h3 { text-align:center; }
-        </style>
-        </head>
-        <body>
-            <h3>LAPORAN TRANSAKSI</h3>
-            ${content}
-        </body>
-        </html>
-    `);
-    win.document.close();
-    win.print();
+    const content =
+        document.querySelector(
+            ".content-print"
+        );
+
+    if(!content) return;
+
+
+    createPrintFrame(
+        "LAPORAN TRANSAKSI",
+        content.innerHTML
+    );
+
 }
 
- function filterProduk() {
-        let filter = document.getElementById("filterProduk").value;
-        let grid = document.getElementById("produkGrid");
 
-        // ambil semua card
-        let cards = Array.from(grid.querySelectorAll(".card"));
+function createPrintFrame(title, htmlContent){
 
-        // sorting
-        if (filter === "nama") {
-            cards.sort(function (a, b) {
-                let namaA = a.querySelector(".nama").textContent.toLowerCase();
-                let namaB = b.querySelector(".nama").textContent.toLowerCase();
-                return namaA.localeCompare(namaB);
-            });
-        }
-        else if (filter === "stok") {
-            cards.sort(function (a, b) {
-                let stokA = parseInt(a.querySelector(".stok").getAttribute("data-stok"));
-                let stokB = parseInt(b.querySelector(".stok").getAttribute("data-stok"));
-                return stokA - stokB;
-            });
-        }
+    const oldFrame =
+        document.getElementById(
+            "printFrame"
+        );
 
-        // kosongkan grid dulu (ini penting)
-        grid.innerHTML = "";
+    if(oldFrame){
 
-        // masukkan ulang sesuai urutan baru
-        cards.forEach(function (card) {
-            grid.appendChild(card);
+        oldFrame.remove();
+
+    }
+
+
+    const iframe =
+        document.createElement(
+            "iframe"
+        );
+
+    iframe.id = "printFrame";
+
+    iframe.style.position = "fixed";
+
+    iframe.style.width = "0";
+
+    iframe.style.height = "0";
+
+    iframe.style.border = "0";
+
+
+    document.body.appendChild(
+        iframe
+    );
+
+
+    const frameDoc =
+        iframe.contentWindow.document;
+
+
+    frameDoc.open();
+
+    frameDoc.write(`
+
+<html>
+
+<head>
+
+<style>
+
+    @page{
+        size: 80mm auto;
+        margin: 0;
+    }
+
+
+    *{
+        box-sizing: border-box;
+    }
+
+
+    body{
+
+        margin: 0;
+
+        padding: 20px;
+
+        min-height: 100vh;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: flex-start;
+
+        background: white;
+
+        color: black;
+
+        font-family: monospace;
+
+        font-size: 12px;
+
+    }
+
+
+    .print-wrapper{
+
+        width: 80mm;
+
+    }
+
+
+    h3{
+
+        text-align: center;
+
+        margin-bottom: 12px;
+
+    }
+
+
+    table{
+
+        width: 100%;
+
+        border-collapse: collapse;
+
+        margin-top: 10px;
+
+    }
+
+
+    th,
+    td{
+
+        padding: 4px 0;
+
+        border-bottom:
+            1px dashed #ccc;
+
+        font-size: 11px;
+
+        text-align: left;
+
+    }
+
+
+    th:last-child,
+    td:last-child{
+
+        text-align: right;
+
+    }
+
+
+    button,
+    .btn-print-single,
+    .btn-print-all{
+
+        display: none !important;
+
+    }
+
+</style>
+
+</head>
+
+
+<body>
+
+    <div class="print-wrapper">
+
+        <h3>
+
+            ${title}
+
+        </h3>
+
+        ${htmlContent}
+
+    </div>
+
+</body>
+
+</html>
+
+`);
+
+    frameDoc.close();
+
+
+    setTimeout(()=>{
+
+        iframe.contentWindow.focus();
+
+        iframe.contentWindow.print();
+
+    }, 500);
+
+}
+function filterProduk() {
+    let filter = document.getElementById("filterProduk").value;
+    let grid = document.getElementById("produkGrid");
+
+    // ambil semua card
+    let cards = Array.from(grid.querySelectorAll(".card"));
+
+    // sorting
+    if (filter === "nama") {
+        cards.sort(function (a, b) {
+            let namaA = a.querySelector(".nama").textContent.toLowerCase();
+            let namaB = b.querySelector(".nama").textContent.toLowerCase();
+            return namaA.localeCompare(namaB);
         });
     }
-    function printStokHabis() {
-    let table = document.getElementById("tabelProduk");
-    let rows = Array.from(table.rows).slice(1); // skip header
+    else if (filter === "stok") {
+        cards.sort(function (a, b) {
+            let stokA = parseInt(a.querySelector(".stok").getAttribute("data-stok"));
+            let stokB = parseInt(b.querySelector(".stok").getAttribute("data-stok"));
+            return stokA - stokB;
+        });
+    }
+
+    // kosongkan grid dulu (ini penting)
+    grid.innerHTML = "";
+
+    // masukkan ulang sesuai urutan baru
+    cards.forEach(function (card) {
+        grid.appendChild(card);
+    });
+}
+function printStokHabis(){
+
+    const table =
+        document.getElementById(
+            "tabelProduk"
+        );
+
+    const rows =
+        Array.from(
+            table.rows
+        ).slice(1);
+
 
     let data = "";
 
-    rows.forEach(row => {
-        let stok = parseInt(row.cells[3].innerText);
 
-        if (stok <= 0) {
+    rows.forEach((row)=>{
+
+        const stok =
+            parseInt(
+                row.cells[3].innerText
+            );
+
+
+        if(stok <= 1){
+
             data += `
+
                 <tr>
-                    <td>${row.cells[0].innerText}</td>
-                    <td>${row.cells[2].innerText}</td>
-                    <td>${row.cells[3].innerText}</td>
+
+                    <td>
+                        ${row.cells[0].innerText}
+                    </td>
+
+                    <td>
+                        ${row.cells[2].innerText}
+                    </td>
+
+                    <td>
+                        ${row.cells[3].innerText}
+                    </td>
+
                 </tr>
+
             `;
+
         }
+
     });
 
-    let printWindow = window.open('', '', 'width=800,height=600');
 
-    printWindow.document.write(`
+    /* hapus iframe lama */
+    const oldFrame =
+        document.getElementById(
+            "printFrame"
+        );
+
+    if(oldFrame){
+
+        oldFrame.remove();
+
+    }
+
+
+    /* buat iframe hidden */
+    const iframe =
+        document.createElement(
+            "iframe"
+        );
+
+    iframe.id = "printFrame";
+
+    iframe.style.position = "fixed";
+
+    iframe.style.width = "0";
+
+    iframe.style.height = "0";
+
+    iframe.style.border = "0";
+
+
+    document.body.appendChild(
+        iframe
+    );
+
+
+    const frameDoc =
+        iframe.contentWindow.document;
+
+
+    frameDoc.open();
+
+    frameDoc.write(`
+
         <html>
+
         <head>
-            <title>Cetak Stok Habis</title>
+
+            <title>
+                Cetak Stok Habis
+            </title>
+
+
             <style>
-                table {
+
+                *{
+                    box-sizing: border-box;
+                }
+
+
+                body{
+
+                    margin: 0;
+
+                    padding: 20px;
+
+                    min-height: 100vh;
+
+                    display: flex;
+
+                    justify-content: center;
+
+                    align-items: flex-start;
+
+                    font-family: Arial, sans-serif;
+
+                    background: white;
+
+                }
+
+
+                .print-wrapper{
+
                     width: 100%;
+
+                    max-width: 700px;
+
+                }
+
+
+                h2{
+
+                    text-align: center;
+
+                    margin-bottom: 20px;
+
+                }
+
+
+                table{
+
+                    width: 100%;
+
                     border-collapse: collapse;
+
                 }
-                th, td {
-                    border: 1px solid black;
-                    padding: 8px;
+
+
+                th,
+                td{
+
+                    border:
+                        1px solid black;
+
+                    padding: 10px;
+
                     text-align: left;
+
                 }
+
+
+                th{
+
+                    background: #f3f4f6;
+
+                }
+
             </style>
+
         </head>
+
+
         <body>
-            <h2>Daftar Produk Stok Habis</h2>
-            <table>
-                <tr>
-                    <th>Nama</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                </tr>
-                ${data || '<tr><td colspan="3">Tidak ada stok habis</td></tr>'}
-            </table>
+
+            <div class="print-wrapper">
+
+                <h2>
+
+                    Daftar Produk Stok Habis
+
+                </h2>
+
+
+                <table>
+
+                    <tr>
+
+                        <th>
+                            Nama
+                        </th>
+
+                        <th>
+                            Harga
+                        </th>
+
+                        <th>
+                            Stok
+                        </th>
+
+                    </tr>
+
+
+                    ${
+                        data ||
+
+                        `
+                        <tr>
+
+                            <td colspan="3">
+
+                                Tidak ada stok habis
+
+                            </td>
+
+                        </tr>
+                        `
+                    }
+
+                </table>
+
+            </div>
+
         </body>
+
         </html>
+
     `);
 
-    printWindow.document.close();
-    printWindow.print();
+    frameDoc.close();
+
+
+    setTimeout(()=>{
+
+        iframe.contentWindow.focus();
+
+        iframe.contentWindow.print();
+
+    }, 500);
+
+}
+
+
+function confirmDelete(button){
+
+    const form = button.closest("form");
+
+
+    Swal.fire({
+
+        title: "Hapus produk?",
+
+        text: "Data yang dihapus tidak dapat dikembalikan.",
+
+        icon: "warning",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Iya, Hapus",
+
+        cancelButtonText: "Tidak",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        confirmButtonColor: "#ef4444",
+
+        cancelButtonColor: "#9ca3af"
+
+    }).then((result)=>{
+
+        if(result.isConfirmed){
+
+            form.submit();
+
+        }
+
+    });
+
+
+    return false;
+
+}
+function confirmLogout(button){
+
+    const form = button.closest("form");
+
+
+    Swal.fire({
+
+        title: "Logout?",
+
+        text: "Apakah kamu yakin ingin keluar dari akun?",
+
+        icon: "question",
+
+        showCancelButton: true,
+
+        showConfirmButton: true,
+
+        confirmButtonText: "Iya",
+
+        cancelButtonText: "Tidak",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        confirmButtonColor: "#2563eb",
+
+        cancelButtonColor: "#9ca3af",
+
+        background: "#ffffff",
+
+        color: "#111827"
+
+    }).then((result)=>{
+
+        if(result.isConfirmed){
+
+            form.submit();
+
+        }
+
+    });
+
+
+    return false;
+
+}
+
+function showToast(message){
+
+    const oldToast = document.querySelector(".custom-toast");
+
+    if(oldToast){
+        oldToast.remove();
+    }
+
+    const toast = document.createElement("div");
+
+    toast.className = "custom-toast";
+
+    toast.innerHTML = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add("show");
+    }, 50);
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+
+    }, 2500);
+
 }

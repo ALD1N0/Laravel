@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Barang extends Model
 {
@@ -14,6 +15,21 @@ class Barang extends Model
         'harga',
         'gambar'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($barang) {
+            $barang->uuid = Str::uuid();
+        });
+    }
+
+    // Laravel akan cari data berdasarkan uuid di URL
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 
     public function detailTransaksi()
     {

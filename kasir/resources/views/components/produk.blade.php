@@ -1,41 +1,50 @@
-<section style="width:70%;">
+<section class="produk">
 
-    <!-- SEARCH -->
-    <select onchange="filterProduk()" id="filterProduk">
-        <option value="">-- Urutkan --</option>
-        <option value="nama">Nama A-Z</option>
-        <option value="stok">Stok Terendah</option>
-    </select>
-    <input type="text" id="searchInput" class="search" placeholder="Cari barang..." onkeyup="cariProduk()">
+    <!-- TOP BAR -->
+    <div class="produk-top">
+        <input type="text" id="searchInput" class="search" placeholder="Cari barang..." onkeyup="cariProduk()">
 
+        <select onchange="filterProduk()" id="filterProduk" class="filter">
+            <option value="">Urutkan</option>
+            <option value="nama">Nama A-Z</option>
+            <option value="stok">Stok Terendah</option>
+        </select>
+    </div>
+
+    <!-- GRID -->
     <div class="grid" id="produkGrid">
 
         @foreach($produks as $produk)
-            <div class="card">
+            <div class="card {{ $produk->stok == 0 ? 'habis' : '' }}"
+                onclick="tambahBarang(null, {{ $produk->id_barang }}, '{{ addslashes($produk->nama) }}', {{ $produk->harga }}, {{ $produk->stok }}, this)" >        
+    
+                <div class="img-wrapper">
+                    @if($produk->gambar)
+                        <img src="{{ asset('storage/' . $produk->gambar) }}">
+                    @else
+                        <div class="img-placeholder">No Image</div>
+                    @endif
+                </div>
 
-                <!-- GAMBAR -->
-                @if($produk->gambar)
-                    <img src="{{ asset('storage/' . $produk->gambar) }}"
-                        style="width:100%; height:100px; object-fit:cover; border-radius:10px;">
-                @else
-                    <div class="img">No Image</div>
-                @endif
+                <!-- INFO -->
+                <div class="card-body">
+                    <p class="nama">{{ $produk->nama }}</p>
+                    <p class="harga">Rp {{ number_format($produk->harga) }}</p>
+                    <p class="stok" data-stok="{{ $produk->stok }}">
+                        Stok: {{ $produk->stok }}
+                    </p>
 
-                <!-- DATA -->
-                <p class="stok" data-stok="{{ $produk->stok }}">Stok: {{ $produk->stok }}</p>
-                <p class="nama">{{ $produk->nama }}</p>
-                <p class="harga" data-harga="{{ $produk->harga }}">
-                    Rp {{ number_format($produk->harga) }}
-                </p>
+                    <button class="btn-add" {{ $produk->stok == 0 ? 'disabled' : '' }}
+                        onclick="event.stopPropagation(); tambahBarang(this, {{ $produk->id_barang }}, '{{ addslashes($produk->nama) }}', {{ $produk->harga }}, {{ $produk->stok }})">
 
-
-                <button
-                    onclick="tambahBarang(this, {{ $produk->id_barang }}, '{{ addslashes($produk->nama) }}', {{ $produk->harga }}, {{ $produk->stok }})">
-                    Add
-                </button>
+                        {{ $produk->stok == 0 ? 'Habis' : ' Tambah' }}
+                    </button>
+                </div>
 
             </div>
-        @endforeach
 
+        @endforeach
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

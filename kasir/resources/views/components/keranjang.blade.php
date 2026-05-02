@@ -1,28 +1,81 @@
-<section id="keranjang" style="width:30%; background:#ccc; padding:15px;">
+<section id="keranjang" class="keranjang">
 
-    <!-- MODE CART -->
-    <div id="cartView">
-        <h3>LIST BARANG</h3>
+    <div id="cartView" class="cart-container">
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Jumlah</th>
-                    <th>Harga</th>
-                </tr>
-            </thead>
-            <tbody id="listBarang"></tbody>
-        </table>
+        <div class="cart-handle"></div>
 
-        <h4>Total: Rp <span id="total">0</span></h4>
+        <!-- HEADER -->
+        <div class="cart-header">
 
-        <button onclick="checkout()" style="width:100%; margin-top:10px;">
-            Checkout & Cetak
-        </button>
+            <div class="header-left">
+                <h3 class="cart-title">
+                    🛒 Keranjang
+                </h3>
+
+                <p class="cart-subtitle">
+                    Produk yang dipilih
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="cart-body">
+
+            <table class="cart-table">
+
+                <thead>
+                    <tr>
+                        <th>Produk</th>
+                        <th>Jumah</th>
+                        <th>Harga</th>
+                    </tr>
+                </thead>
+
+                <!-- JANGAN UBAH ID -->
+                <tbody id="listBarang"></tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="cart-footer">
+
+            <div class="cart-summary">
+
+                <div class="summary-left">
+                    <span class="total-label">
+                        Total Belanja
+                    </span>
+
+                    <h4 class="total-price">
+                        Rp <span id="total">0</span>
+                    </h4>
+                </div>
+
+            </div>
+
+            <button onclick="checkout()" class="btn-checkout">
+             Checkout Sekarang
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- MODE STRUK -->
     <div id="strukView" style="display:none;"></div>
 
 </section>
+
+<script>const keranjang = document.getElementById("keranjang");
+
+const handle = document.querySelector(".cart-handle");
+
+handle.addEventListener("click", () => {
+
+    keranjang.classList.toggle("expand");
+
+});</script>

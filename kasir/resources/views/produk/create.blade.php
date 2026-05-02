@@ -2,43 +2,132 @@
 
 @section('content')
 
-    <div class="form-container">
-        <h2>Tambah Produk</h2>
+<div class="product-form-page">
 
-        <form action="{{ route('produk.store') }}" method="POST" enctype="multipart/form-data">
+    <div class="form-container">
+
+        <!-- HEADER -->
+        <div class="form-header">
+
+            <h2 class="form-title">
+                Tambah Produk
+            </h2>
+
+            <p class="form-subtitle">
+                Tambahkan produk baru ke katalog toko
+            </p>
+
+        </div>
+
+
+        <form 
+            action="{{ route('produk.store') }}"
+            method="POST"
+            enctype="multipart/form-data">
+
             @csrf
 
+
+            <!-- NAMA -->
             <div class="form-group">
-                <p>Nama</p>
-                <input type="text" name="nama" required>
+
+                <label>
+                    Nama Produk
+                </label>
+
+                <input 
+                    type="text"
+                    name="nama"
+                    placeholder="Contoh: Sambal Pedas"
+                    required>
+
             </div>
 
+
+            <!-- HARGA -->
             <div class="form-group">
-                <p>Harga</p>
-                <input type="number" name="harga" required>
+
+                <label>
+                    Harga
+                </label>
+
+                <input 
+                    type="number"
+                    name="harga"
+                    placeholder="Contoh: 15000"
+                    required>
+
             </div>
 
+
+            <!-- STOK -->
             <div class="form-group">
-                <p>Stok</p>
-                <input type="number" name="stok" required>
+
+                <label>
+                    Stok
+                </label>
+
+                <input 
+                    type="number"
+                    name="stok"
+                    placeholder="Contoh: 25"
+                    required>
+
             </div>
 
-            <div class="form-group">
-                <p>Foto Produk</p>
-                <input type="file" name="gambar" id="inputGambar" accept="image/*" required>
 
-                <!-- PREVIEW -->
-                <img id="previewGambar" class="preview-img" style="display:none;">
+            <!-- GAMBAR -->
+            <div class="form-group">
+
+                <label>
+                    Foto Produk
+                </label>
+
+                <input 
+                    type="file"
+                    name="gambar"
+                    id="inputGambar"
+                    accept="image/*"
+                    required>
+
+                <img 
+                    id="previewGambar"
+                    class="preview-img"
+                    style="display:none;">
+
             </div>
 
+
+            <!-- ACTION -->
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Simpan</button>
+
+                <button 
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Simpan Produk
+
+                </button>
+
 
                 <a href="{{ route('produk.index') }}">
-                    <button type="button" class="btn btn-secondary">Kembali</button>
+
+                    <button 
+                        type="button"
+                        class="btn btn-secondary">
+
+                        Kembali
+
+                    </button>
+
                 </a>
+
             </div>
+
         </form>
+
     </div>
+
+</div>
 
 @endsection

@@ -1,8 +1,42 @@
-<header style="display:flex; justify-content:space-between; padding:15px; background:#4e73df; color:white;">
-    <h2>MAREM STORE</h2>
-    <nav>
-        <a href="{{ route("home") }}">DASHBOARD</a>
-        <a href="{{ route("produk.index") }}"> BARANG</a>
-        <a href="{{ route('riwayat') }}">RIWAYAT</a>
-    </nav>
+<header class="navbar">
+    <div class="navbar-container">
+        <h2 class="logo">MAREM STORE</h2>
+
+        <div class="menu-toggle" id="menu-toggle">
+            ☰
+        </div>
+
+        <nav class="nav-menu" id="nav-menu">
+            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
+                Dashboard
+            </a>
+
+            <a href="{{ route('produk.index') }}" class="nav-link {{ request()->routeIs('produk.*') ? 'active' : '' }}">
+                Barang
+            </a>
+
+            <a href="{{ route('riwayat') }}" class="nav-link {{ request()->routeIs('riwayat') ? 'active' : '' }}">
+                Riwayat
+            </a>
+
+            <form method="POST" action="/logout" class="logout-form">
+                @csrf
+
+                <button type="submit" class="btn-logout" onclick="return confirmLogout(this)">
+
+                    Logout
+
+                </button>
+            </form>
+        </nav>
+    </div>
 </header>
+
+<script>
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('nav-menu');
+
+    toggle.addEventListener('click', () => {
+        menu.classList.toggle('active');
+    });
+</script>

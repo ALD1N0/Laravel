@@ -10,110 +10,273 @@ $bulan = [
 ];
 @endphp
 
-<div style="width:100%">
+
+<div class="riwayat-page">
+
 
     <!-- FILTER -->
-    <form method="GET" action="{{ route('riwayat') }}"
-        style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
+    <form 
+        method="GET"
+        action="{{ route('riwayat') }}"
+        class="filter-box">
 
+        
         <!-- MODE -->
-        <select name="mode" onchange="this.form.submit()">
-            <option value="harian" {{ request('mode')=='harian'?'selected':'' }}>Harian</option>
-            <option value="bulanan" {{ request('mode')=='bulanan'?'selected':'' }}>Bulanan</option>
-            <option value="tahunan" {{ request('mode')=='tahunan'?'selected':'' }}>Tahunan</option>
-        </select>
+        <div class="filter-group">
+
+            <label>
+                Mode
+            </label>
+
+            <select 
+                name="mode"
+                onchange="this.form.submit()">
+
+                <option value="harian"
+                    {{ request('mode')=='harian'?'selected':'' }}>
+                    Harian
+                </option>
+
+                <option value="bulanan"
+                    {{ request('mode')=='bulanan'?'selected':'' }}>
+                    Bulanan
+                </option>
+
+                <option value="tahunan"
+                    {{ request('mode')=='tahunan'?'selected':'' }}>
+                    Tahunan
+                </option>
+
+            </select>
+
+        </div>
+
 
         <!-- BULAN -->
-        <select name="bulan">
-            <option value="">-- Bulan --</option>
-            @foreach($bulan as $i => $b)
-                <option value="{{ $i }}" {{ request('bulan')==$i?'selected':'' }}>
-                    {{ $b }}
+        <div class="filter-group">
+
+            <label>
+                Bulan
+            </label>
+
+            <select name="bulan">
+
+                <option value="">
+                    -- Bulan --
                 </option>
-            @endforeach
-        </select>
+
+                @foreach($bulan as $i => $b)
+
+                    <option 
+                        value="{{ $i }}"
+                        {{ request('bulan')==$i?'selected':'' }}>
+
+                        {{ $b }}
+
+                    </option>
+
+                @endforeach
+
+            </select>
+
+        </div>
+
 
         <!-- TANGGAL -->
-        <input type="date" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
-        <input type="date" name="tanggal_selesai" value="{{ request('tanggal_selesai') }}">
+        <div class="filter-group">
 
-        <button type="submit">Filter</button>
+            <label>
+                Dari
+            </label>
 
-        <a href="{{ route('riwayat') }}">
-            <button type="button">Reset</button>
-        </a>
+            <input 
+                type="date"
+                name="tanggal_mulai"
+                value="{{ request('tanggal_mulai') }}">
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>
+                Sampai
+            </label>
+
+            <input 
+                type="date"
+                name="tanggal_selesai"
+                value="{{ request('tanggal_selesai') }}">
+
+        </div>
+
+
+        <!-- ACTION -->
+        <div class="filter-actions">
+
+            <button 
+                type="submit"
+                class="btn-filter">
+
+                Filter
+
+            </button>
+
+
+            <a 
+                href="{{ route('riwayat') }}"
+                class="btn-reset">
+
+                Reset
+
+            </a>
+
+        </div>
 
     </form>
 
-    <!-- GRAFIK -->
-    <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px;">
-        <h3>
+
+    <!-- CHART -->
+    <div class="chart-card">
+
+        <h3 class="chart-title">
+
             Grafik Keuntungan 
             {{ $mode=='harian'?'Harian':($mode=='bulanan'?'Bulanan':'Tahunan') }}
+
         </h3>
-        <canvas id="chartKeuntungan" style="height:300px;"></canvas>
+
+        <canvas 
+            id="chartKeuntungan"
+            class="chart-canvas"></canvas>
+
     </div>
 
-    <!-- CETAK -->
-    <button onclick="printSemua()">🖨️ Cetak Semua</button>
 
-    <!-- KEUNTUNGAN BULANAN -->
-    <div style="background:white; padding:15px; margin-top:20px; border-radius:10px;">
-        <h3>Keuntungan per Bulan</h3>
-        <table border="1" width="100%">
+    <!-- BUTTON PRINT -->
+    <button 
+        onclick="printSemua()"
+        class="btn-print-all">
+
+        🖨️ Cetak Semua
+
+    </button>
+
+
+    <!-- TABLE KEUNTUNGAN -->
+    <div class="profit-card">
+
+        <h3 class="section-title">
+
+            Keuntungan per Bulan
+
+        </h3>
+
+        <table class="profit-table">
+
             <tr>
                 <th>Bulan</th>
                 <th>Total</th>
             </tr>
 
             @foreach($keuntungan as $k)
+
             <tr>
-                <td>{{ $bulan[$k->bulan] }}</td>
-                <td>Rp {{ number_format($k->total) }}</td>
+
+                <td>
+                    {{ $bulan[$k->bulan] }}
+                </td>
+
+                <td>
+                    Rp {{ number_format($k->total) }}
+                </td>
+
             </tr>
+
             @endforeach
+
         </table>
+
     </div>
 
+
     <!-- RIWAYAT -->
-    <h2>Riwayat Transaksi</h2>
+    <h2 class="section-title">
+
+        Riwayat Transaksi
+
+    </h2>
+
 
     <div class="content-print">
 
         @foreach($transaksis as $t)
-        <div id="transaksi-{{ $t->id_transaksi }}"
-            style="background:white; padding:15px; margin-bottom:15px; border-radius:10px;">
 
-            <p>{{ $t->tanggal }}</p>
+        <div 
+            id="transaksi-{{ $t->id_transaksi }}"
+            class="transaksi-card">
 
-            <button onclick="printTransaksi({{ $t->id_transaksi }})">
+
+            <p class="tanggal-transaksi">
+
+                {{ $t->tanggal }}
+
+            </p>
+
+
+            {{-- <button 
+                onclick="printTransaksi({{ $t->id_transaksi }})"
+                class="btn-print-single">
+
                 Cetak
-            </button>
 
-            <table border="1" width="100%">
+            </button> --}}
+
+
+            <table class="transaksi-table">
+
                 <tr>
                     <th>Barang</th>
                     <th>Jumlah</th>
                     <th>Subtotal</th>
                 </tr>
 
+
                 @foreach($t->details as $d)
+
                 <tr>
-                    <td>{{ $d->barang->nama ?? '-' }}</td>
-                    <td>{{ $d->jumlah }}</td>
-                    <td>Rp {{ number_format($d->subtotal) }}</td>
+
+                    <td>
+                        {{ $d->barang->nama ?? '-' }}
+                    </td>
+
+                    <td>
+                        {{ $d->jumlah }}
+                    </td>
+
+                    <td>
+                        Rp {{ number_format($d->subtotal) }}
+                    </td>
+
                 </tr>
+
                 @endforeach
+
             </table>
 
-            <h4 style="text-align:right;">
-              Total = Rp {{ number_format($t->total) }}
+
+            <h4 class="total-transaksi">
+
+                Total = Rp {{ number_format($t->total) }}
+
             </h4>
 
         </div>
+
         @endforeach
 
     </div>
+
 
 </div>
 

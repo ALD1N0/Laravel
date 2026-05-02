@@ -2,62 +2,140 @@
 
 @section('content')
 
-    <div style="width:100%">
-        <input type="text" id="searchProduk" class="search" placeholder="Cari barang..." onkeyup="cariProdukTabel()">
-        <select onchange="filterbarangproduk()" id="filterbarangproduk">
-            <option value="">-- Urutkan --</option>
-            <option value="nama">Nama A-Z</option>
-            <option value="stok">Stok Terendah</option>
-        </select>
-        <h2>Data Produk</h2>
-<button onclick="printStokHabis()">🖨 Cetak Stok Habis</button>
-        <a href="{{ route('produk.create') }}">
-            <button>+ Tambah Barang</button>
-        </a>
+    <div class="produk-page">
 
-        <table border="1" cellpadding="10" id="tabelProduk">
-            <tr>
-                <th>Nama</th>
-                <th>Foto</th>
-                <th>Harga</th>
-                <th>Stok</th>
-                <th>Aksi</th>
-            </tr>
+        <!-- TOPBAR -->
+        <div class="produk-toolbar">
 
-            @foreach($produks as $p)
+            <div class="produk-search-wrap">
+
+                <input type="text" id="searchProduk" class="search produk-search" placeholder="Cari barang..."
+                    onkeyup="cariProdukTabel()">
+
+                <select onchange="filterbarangproduk()" id="filterbarangproduk" class="produk-filter">
+
+                    <option value="">-- Urutkan --</option>
+                    <option value="nama">Nama A-Z</option>
+                    <option value="stok">Stok Terendah</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="produk-header">
+
+                <h2 class="produk-title">
+                    Data Produk
+                </h2>
+
+                <div class="produk-actions">
+
+                    <button onclick="printStokHabis()" class="btn-print-stock">
+
+                        🖨 Cetak Stok Habis
+
+                    </button>
+
+                    <a href="{{ route('produk.create') }}">
+
+                        <button class="btn-add-product">
+
+                            + Tambah Barang
+
+                        </button>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="table-wrapper">
+
+            <table border="1" cellpadding="10" id="tabelProduk" class="produk-table">
+
                 <tr>
-
-                    <!-- FOTO -->
-                    <td class="nama-produk">{{ $p->nama }}</td>
-                    <td>
-                        @if($p->gambar)
-                            <img src="{{ asset('storage/' . $p->gambar) }}" width="80" style="border-radius:10px;">
-                        @else
-                            <span>Tidak ada</span>
-                        @endif
-                    </td>
-                    <td>Rp {{ number_format($p->harga) }}</td>
-                    <td>{{ $p->stok }}</td>
-
-                    <td>
-                        <!-- EDIT -->
-                        <a href="{{ route('produk.edit', $p) }}">
-                            <button >Edit</button>
-                        </a>
-
-                        <!-- DELETE -->
-                        <form action="{{ route('produk.destroy', $p) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" onclick="return confirm('Yakin hapus?')">
-                                Hapus
-                            </button>
-                        </form>
-                    </td>
-
+                    <th>Nama</th>
+                    <th>Foto</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th>Aksi</th>
                 </tr>
-            @endforeach
-        </table>
+
+                @foreach($produks as $p)
+
+                    <tr>
+
+                        <td class="nama-produk">
+                            {{ $p->nama }}
+                        </td>
+
+                        <td>
+
+                            @if($p->gambar)
+
+                                <img src="{{ asset('storage/' . $p->gambar) }}" class="produk-image">
+
+                            @else
+
+                                <span class="no-image">
+                                    Tidak ada
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        <td class="harga-cell">
+                            Rp {{ number_format($p->harga) }}
+                        </td>
+
+                        <td class="stok-cell">
+                            {{ $p->stok }}
+                        </td>
+
+                        <td>
+
+                            <div class="action-group">
+
+                                <a href="{{ route('produk.edit', $p) }}">
+
+                                    <button class="btn-edit">
+                                        Edit
+                                    </button>
+
+                                </a>
+
+                                <form action="{{ route('produk.destroy', $p) }}" method="POST" style="display:inline;">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" class="btn-delete" onclick="return confirmDelete(this)">
+
+                                        Hapus
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                @endforeach
+
+            </table>
+
+        </div>
+
     </div>
 
 @endsection

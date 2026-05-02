@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             reader.onload = function(e) {
                 preview.src = e.target.result;
-                preview.style.display = "block"; // tampilkan gambar
+                preview.style.display = "block"; 
             }
 
             reader.readAsDataURL(file);

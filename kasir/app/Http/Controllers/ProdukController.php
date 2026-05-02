@@ -37,19 +37,19 @@ class ProdukController extends Controller
             'gambar' => $path
         ]);
 
-        return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan');
+        return redirect()->route('produk.index')
+            ->with('success', 'Produk berhasil ditambahkan');
     }
 
-    public function edit($id)
+    // UBAH BAGIAN INI
+    public function edit(Barang $produk)
     {
-        $produk = Barang::findOrFail($id);
         return view('produk.edit', compact('produk'));
     }
 
-    public function update(Request $request, $id)
+    // UBAH BAGIAN INI
+    public function update(Request $request, Barang $produk)
     {
-        $produk = Barang::findOrFail($id);
-
         $request->validate([
             'nama' => 'required',
             'harga' => 'required|numeric',
@@ -74,19 +74,20 @@ class ProdukController extends Controller
             'gambar' => $produk->gambar
         ]);
 
-        return redirect()->route('produk.index')->with('success', 'Produk berhasil diupdate');
+        return redirect()->route('produk.index')
+            ->with('success', 'Produk berhasil diupdate');
     }
 
-    public function destroy($id)
+    // UBAH BAGIAN INI
+    public function destroy(Barang $produk)
     {
-        $produk = Barang::findOrFail($id);
-
         if ($produk->gambar && Storage::exists('public/' . $produk->gambar)) {
             Storage::delete('public/' . $produk->gambar);
         }
 
         $produk->delete();
 
-        return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus');
+        return redirect()->route('produk.index')
+            ->with('success', 'Produk berhasil dihapus');
     }
 }
